@@ -33,27 +33,27 @@ def wait_for_load() -> None:
     WebDriverWait(DRIVER, 10).until(invisibility_of_element_located((By.CLASS_NAME, "loading-indicator")))
 
 
-def scroll_down_page() -> bool:
+def scroll_down_page() -> None:
     more_btn = DRIVER.find_element_by_id("moreBtn")
 
     while True:
         try:
             more_btn.click()
         except ElementNotInteractableException:
-            return True
+            return None
         sleep(1)  # TODO: check if sleep time can be reduced
 
 
-def scrape_profile_reviews(review_set: set, profile_id: str) -> bool:
+def scrape_profile_reviews(review_set: set, profile_id: str) -> None:
     wait_for_load()
+    scroll_down_page()
 
-    if not scroll_down_page():
-        return False
-
+    count = 0
     for card in DRIVER.find_element_by_class_name("profile-wrapper").find_elements_by_class_name("profile-review-card"):
+        count += 1
         review_set.add(get_review_from_card(card, profile_id))
 
-    return True
+    print(f"{count} reviews were collected.")
 
 
 def scrape_contacts(profile_queue: SimpleQueue, profile_id: str, peer_type: str):
@@ -61,8 +61,13 @@ def scrape_contacts(profile_queue: SimpleQueue, profile_id: str, peer_type: str)
     wait_for_load()
     scroll_down_page()
 
+    count = 0
     for contact in DRIVER.find_elements(By.CLASS_NAME, "cook-tile"):
-        profile_queue.put(get_id_from_url(contact.find_element(By.TAG_NAME, "a").get_property("href")))
+        contact_id = get_id_from_url(contact.find_element(By.TAG_NAME, "a").get_property("href"))
+        count += 1
+        profile_queue.put(contact_id)
+
+    print(f"{count} {peer_type.rstrip('s') + 's'} were collected.")
 
 
 def is_profile_empty() -> bool:
@@ -85,13 +90,13 @@ def load_page(url: str):
         print("Could not open", url, "error:", str(err))
 
 
-def is_known_profile(profile_id: str, viewed_profiles: set) -> bool:
-    old_len = len(viewed_profiles)
-    viewed_profiles.add(profile_id)
+def append_if_unknown(item: str, viewed: set) -> bool:
+    prev_len = len(viewed)
+    viewed.add(item)
 
-    if old_len == len(viewed_profiles):  # Check if profile_id in set
-        return True
-    return False
+    if prev_len == len(viewed):  # Check if item in set
+        return False
+    return True
 
 
 def get_id_from_url(url: str) -> str:
@@ -99,14 +104,15 @@ def get_id_from_url(url: str) -> str:
 
 
 def profile_scraper(url: str,
-                    profiles: SimpleQueue,
-                    viewed_profiles: set,
-                    reviews: set,
+                    profiles: SimpleQueue[str],
+                    viewed_profiles: set[str],
+                    reviews: set[Review],
                     recipes: set) -> bool:
+    profile_id = get_id_from_url(url)
+    print(f"Started scraping profile: '{profile_id}'")
     load_page(url)
-    profile_id = get_id_from_url(DRIVER.current_url)
 
-    if is_known_profile(profile_id, viewed_profiles) or not is_valid_profile():
+    if not append_if_unknown(profile_id, viewed_profiles) or not is_valid_profile():
         return False
 
     if not is_profile_empty():
@@ -116,6 +122,7 @@ def profile_scraper(url: str,
     scrape_contacts(profiles, profile_id, "following")
 
     print(f"Finished scraping profile: '{profile_id}'")
+    print("*" * 60)
 
 
 def get_review_from_card(review: WebElement, user_id) -> Review:
@@ -126,4 +133,4 @@ def get_review_from_card(review: WebElement, user_id) -> Review:
         text = None
     stars = review.find_element_by_class_name("stars").get_attribute("data-ratingstars")
 
-    return Review(recipe_id=recipe_id, user_id=user_id, text=text, stars=stars)
+    return Review(recipe_id=recipe_id, profile_id=user_id, text=text, stars=stars)

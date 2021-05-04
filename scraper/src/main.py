@@ -16,6 +16,7 @@ def main():
     url = r"https://www.allrecipes.com/cook/thiswifecooks/reviews/"
     url_empty = r"https://www.allrecipes.com/cook/22195726/reviews/"
     url_404 = r"https://www.allrecipes.com/cook/12696989/reviews"
+    url_no_followers = r"https://www.allrecipes.com/cook/1133772/reviews/"
     main_seed = r"https://www.allrecipes.com/cook/16007298/"
     profile_id_queue: SimpleQueue = SimpleQueue()
     viewed_profiles: set = set()
@@ -27,8 +28,9 @@ def main():
     from lib import profile_scraper  # Imported only after readiness check.
 
     profile_scraper(url, profile_id_queue, viewed_profiles, review_set, recipe_set)
-    profile_scraper(url_empty, profile_id_queue, viewed_profiles, review_set, recipe_set)
-    profile_scraper(url_404, profile_id_queue, viewed_profiles, review_set, recipe_set)
+    # profile_scraper(url_empty, profile_id_queue, viewed_profiles, review_set, recipe_set)
+    # profile_scraper(url_404, profile_id_queue, viewed_profiles, review_set, recipe_set)
+    profile_scraper(url_no_followers, profile_id_queue, viewed_profiles, review_set, recipe_set)
 
     print("Reviews:")
     print(review_set)
