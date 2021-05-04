@@ -1,13 +1,11 @@
 class Review:
-    def __init__(self, recipe_id: int, recipe_name: str, user_id: str, text: str, rating: int):
+    def __init__(self, recipe_id: int, user_id: str, text: str, stars: int):
         self.recipe_id = recipe_id
-        self.recipe_name = recipe_name
         self.user_id = user_id
         self.text = text
-        self.rating = rating
+        self.stars = stars
 
     def __repr__(self):
-        return f"'id: {self.recipe_id}," \
-               f"'Recipe': {self.recipe_name}," \
-               f" 'Reviewed by':  {self.user_id}," \
-               f" 'Rating': {self.rating}\n"
+        return f"'ID: {self.recipe_id}," \
+               f" 'Reviewer':  {self.user_id}," \
+               f" 'Stars': {self.stars}\n"
