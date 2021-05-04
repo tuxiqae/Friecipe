@@ -41,7 +41,7 @@ services:
       SELENIUM: ${SELENIUM:-selenium}
     depends_on:
       #      - mongodb
-      - selenium
+      - selenium #TODO: write health check for Selenium
     restart: always
 
 
