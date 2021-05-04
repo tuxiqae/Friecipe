@@ -1,13 +1,13 @@
+from os import environ
+from queue import SimpleQueue
+from time import sleep
+
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException, ElementNotInteractableException, NoSuchElementException
-from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
-
-from os import environ
-from time import sleep
-from queue import SimpleQueue
 
 from .review import Review
 
@@ -51,7 +51,10 @@ def scrape_contacts(driver: WebDriver, profile_queue: SimpleQueue):
     pass
     # TODO: Implement
 
+
 def is_profile_empty(driver: WebDriver) -> bool:
+    pass
+
 
 def profile_scraper(url: str, driver: WebDriver, profile_queue: SimpleQueue, viewed_profiles: set, review_set) -> bool:
     try:
