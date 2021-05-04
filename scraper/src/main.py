@@ -1,8 +1,15 @@
 from time import sleep
-
-from lib import profile_scraper
+import requests
+from os import environ
 
 from queue import SimpleQueue
+
+
+def check_readiness():
+    sleep(1)
+    while not requests.get(f"http://{environ['SELENIUM']}:4444/wd/hub/status").json()["value"]["ready"]:
+        print("Waiting...")
+        sleep(0.5)
 
 
 def main():
@@ -14,6 +21,11 @@ def main():
     viewed_profiles: set = set()
     review_set: set = set()
     recipe_set: set = set()
+
+    check_readiness()
+
+    from lib import profile_scraper  # Imported only after readiness check.
+
     profile_scraper(url, profile_id_queue, viewed_profiles, review_set, recipe_set)
     profile_scraper(url_empty, profile_id_queue, viewed_profiles, review_set, recipe_set)
     profile_scraper(url_404, profile_id_queue, viewed_profiles, review_set, recipe_set)
