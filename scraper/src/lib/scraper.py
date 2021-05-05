@@ -16,14 +16,23 @@ from .review import Review
 
 
 def init_driver() -> WebDriver:
+    print("Initializing driver...")
     options = FirefoxOptions()
+    # Disable CSS
+    # options.set_preference('permissions.default.stylesheet', 2)
+    # Disable images
+    # options.set_preference('permissions.default.image', 2)
+    # Disable Flash
+    # options.set_preference('dom.ipc.plugins.enabled.libflashplayer.so', 'false')
     # options.add_argument("--headless")  # TODO: Remove or not
     remote_host = f'http://{environ["SELENIUM"]}:4444/wd/hub'
 
-    return webdriver.Remote(command_executor=remote_host,
-                            keep_alive=False,  # TODO: Remove
-                            options=options,
-                            desired_capabilities=DesiredCapabilities.FIREFOX)
+    remote = webdriver.Remote(command_executor=remote_host,
+                              keep_alive=False,  # TODO: Remove
+                              options=options,
+                              desired_capabilities=DesiredCapabilities.FIREFOX)
+    print("Finished initializing driver...")
+    return remote
 
 
 DRIVER = init_driver()
@@ -51,13 +60,20 @@ def scrape_profile_reviews(review_set: set, profile_id: str) -> None:
     count = 0
     for card in DRIVER.find_element_by_class_name("profile-wrapper").find_elements_by_class_name("profile-review-card"):
         count += 1
+        if count % 100 == 0:
+            print(f"Scraped {count} reviews.")
         review_set.add(get_review_from_card(card, profile_id))
 
     print(f"{count} reviews were collected.")
 
 
+def generate_profile_link(profile_id: str, route: str):
+    return f"https://www.allrecipes.com/cook/{profile_id}/{route}/"
+
+
 def scrape_contacts(profile_queue: SimpleQueue, profile_id: str, peer_type: str):
-    DRIVER.get(f"https://www.allrecipes.com/cook/{profile_id}/{peer_type}/")
+    url = generate_profile_link(profile_id, peer_type)
+    DRIVER.get(url)
     wait_for_load()
     scroll_down_page()
 
@@ -65,6 +81,8 @@ def scrape_contacts(profile_queue: SimpleQueue, profile_id: str, peer_type: str)
     for contact in DRIVER.find_elements(By.CLASS_NAME, "cook-tile"):
         contact_id = get_id_from_url(contact.find_element(By.TAG_NAME, "a").get_property("href"))
         count += 1
+        if count % 100 == 0:
+            print(f"Scraped {count} contacts")
         profile_queue.put(contact_id)
 
     print(f"{count} {peer_type.rstrip('s') + 's'} were collected.")
@@ -83,7 +101,9 @@ def is_valid_profile() -> bool:
     return False
 
 
-def load_page(url: str):
+def navigate_profile(profile_id: str):
+    url = generate_profile_link(profile_id, "reviews")
+
     try:
         DRIVER.get(url)
     except WebDriverException as err:
@@ -103,14 +123,14 @@ def get_id_from_url(url: str) -> str:
     return url.split("/")[4]
 
 
-def profile_scraper(url: str,
+def profile_scraper(profile_id: str,
                     profiles: SimpleQueue[str],
                     viewed_profiles: set[str],
                     reviews: set[Review],
                     recipes: set) -> bool:
     profile_id = get_id_from_url(url)
     print(f"Started scraping profile: '{profile_id}'")
-    load_page(url)
+    navigate_profile(profile_id)
 
     if not append_if_unknown(profile_id, viewed_profiles) or not is_valid_profile():
         return False
