@@ -1,23 +1,30 @@
 from time import sleep
-import requests
 from os import environ
+import requests
+import logging
 
 from queue import SimpleQueue
 
 
-def check_readiness():
-    sleep(1)
-    while not requests.get(f"http://{environ['SELENIUM']}:4444/wd/hub/status").json()["value"]["ready"]:
-        print("Waiting...")
-        sleep(0.5)
+def check_readiness() -> None:
+    print("Checking readiness.")
+    sleep(5)
+    while True:
+        if not requests.get(f"http://{environ['SELENIUM']}:4444/wd/hub/status").json()["value"]["ready"]:
+            print("Waiting...")
+            sleep(0.5)
+        else:
+            print("Selenium is up and running.")
+            return None
 
 
 def main():
-    url = r"https://www.allrecipes.com/cook/thiswifecooks/reviews/"
-    url_empty = r"https://www.allrecipes.com/cook/22195726/reviews/"
-    url_404 = r"https://www.allrecipes.com/cook/12696989/reviews"
-    url_no_followers = r"https://www.allrecipes.com/cook/1133772/reviews/"
-    main_seed = r"https://www.allrecipes.com/cook/16007298/"
+    print("Starting...")
+    url = "thiswifecooks"
+    url_empty = r"22195726"
+    url_404 = r"12696989"
+    url_no_followers = r"1133772"
+    main_seed = r"16007298"
     profile_id_queue: SimpleQueue = SimpleQueue()
     viewed_profiles: set = set()
     review_set: set = set()
@@ -30,7 +37,8 @@ def main():
     profile_scraper(url, profile_id_queue, viewed_profiles, review_set, recipe_set)
     # profile_scraper(url_empty, profile_id_queue, viewed_profiles, review_set, recipe_set)
     # profile_scraper(url_404, profile_id_queue, viewed_profiles, review_set, recipe_set)
-    profile_scraper(url_no_followers, profile_id_queue, viewed_profiles, review_set, recipe_set)
+    # profile_scraper(url_no_followers, profile_id_queue, viewed_profiles, review_set, recipe_set)
+    # profile_scraper(main_seed, profile_id_queue, viewed_profiles, review_set, recipe_set)
 
     print("Reviews:")
     print(review_set)
