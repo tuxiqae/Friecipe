@@ -1,4 +1,4 @@
-FROM python:3.9.4
+FROM python:3.9.5
 # Allows the service to print to STDOUT without buffering
 ENV PYTHONUNBUFFERED=1
 WORKDIR /app
