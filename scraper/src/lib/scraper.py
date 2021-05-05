@@ -128,7 +128,6 @@ def profile_scraper(profile_id: str,
                     viewed_profiles: set[str],
                     reviews: set[Review],
                     recipes: set) -> bool:
-    profile_id = get_id_from_url(url)
     print(f"Started scraping profile: '{profile_id}'")
     navigate_profile(profile_id)
 
