@@ -28,7 +28,7 @@ services:
   #      - mongodb
 
 
-  scanner:
+  scraper:
     build: ./scraper
     command: poetry run python ./src/main.py
     environment:
@@ -36,8 +36,10 @@ services:
       MONGO_PASS: ${MONGO_PASS:-pass}
       MONGO_HOST: ${MONGO_HOST:-mongodb}
       MONGO_PORT: ${MONGO_PORT:-27017}
-      MONGO_DB: ${MONGO_DB:-threatmapper}
-      MONGO_COLL: ${MONGO_COLL:-attacks}
+      MONGO_DB: ${MONGO_DB:-scraper}
+      MONGO_REVIEWS_COLL: ${MONGO_COLL:-reviews}
+      MONGO_RECIPES_COLL: ${MONGO_COLL:-recipes}
+      MONGO_PROFILES_COLL: ${MONGO_COLL:-profiles}
       SELENIUM: ${SELENIUM:-selenium}
     depends_on:
       #      - mongodb
