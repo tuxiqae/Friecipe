@@ -67,12 +67,12 @@ def scrape_profile_reviews(review_set: set, profile_id: str) -> None:
     print(f"{count} reviews were collected.")
 
 
-def generate_profile_link(profile_id: str, route: str):
+def format_profile_link(profile_id: str, route: str):
     return f"https://www.allrecipes.com/cook/{profile_id}/{route}/"
 
 
 def scrape_contacts(profile_queue: SimpleQueue, profile_id: str, peer_type: str):
-    url = generate_profile_link(profile_id, peer_type)
+    url = format_profile_link(profile_id, peer_type)
     DRIVER.get(url)
     wait_for_load()
     scroll_down_page()
@@ -102,7 +102,7 @@ def is_valid_profile() -> bool:
 
 
 def navigate_profile(profile_id: str):
-    url = generate_profile_link(profile_id, "reviews")
+    url = format_profile_link(profile_id, "reviews")
 
     try:
         DRIVER.get(url)

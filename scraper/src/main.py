@@ -1,13 +1,12 @@
 from time import sleep
 from os import environ
 import requests
-import logging
 
 from queue import SimpleQueue
 
 
 def check_readiness() -> None:
-    print("Checking readiness.")
+    print("Checking readiness...")
     sleep(5)
     while True:
         if not requests.get(f"http://{environ['SELENIUM']}:4444/wd/hub/status").json()["value"]["ready"]:
@@ -34,21 +33,17 @@ def main():
 
     from lib import profile_scraper  # Imported only after readiness check.
 
-    profile_scraper(url, profile_id_queue, viewed_profiles, review_set, recipe_set)
+    # profile_scraper(url, profile_id_queue, viewed_profiles, review_set, recipe_set)
     # profile_scraper(url_empty, profile_id_queue, viewed_profiles, review_set, recipe_set)
     # profile_scraper(url_404, profile_id_queue, viewed_profiles, review_set, recipe_set)
     # profile_scraper(url_no_followers, profile_id_queue, viewed_profiles, review_set, recipe_set)
-    # profile_scraper(main_seed, profile_id_queue, viewed_profiles, review_set, recipe_set)
+    profile_scraper(main_seed, profile_id_queue, viewed_profiles, review_set, recipe_set)
 
-    print("Reviews:")
-    print(review_set)
+    print(f"Reviews count: {len(review_set)}")
     print("*" * 60)
-    print("viewed_profiles:")
-    print(viewed_profiles)
+    print(f"viewed_profiles amount: {len(viewed_profiles)}")
     print("*" * 60)
-    print("Queued profiles:")
-    while not profile_id_queue.empty():
-        print(profile_id_queue.get_nowait())
+    print(f"Queued profiles amount: {profile_id_queue.qsize()}")
 
 
 if __name__ == '__main__':
