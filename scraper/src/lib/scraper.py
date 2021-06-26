@@ -101,7 +101,7 @@ def is_valid_profile() -> bool:
     return False
 
 
-def navigate_profile(profile_id: str):
+def navigate_profile(profile_id: str) -> None:
     url = format_profile_link(profile_id, "reviews")
 
     try:

@@ -24,6 +24,9 @@ def main():
     url_404 = r"12696989"
     url_no_followers = r"1133772"
     main_seed = r"16007298"
+    luannea = "luannea"
+    seed = main_seed
+
     profile_id_queue: SimpleQueue = SimpleQueue()
     viewed_profiles: set = set()
     review_set: set = set()
@@ -37,7 +40,7 @@ def main():
     # profile_scraper(url_empty, profile_id_queue, viewed_profiles, review_set, recipe_set)
     # profile_scraper(url_404, profile_id_queue, viewed_profiles, review_set, recipe_set)
     # profile_scraper(url_no_followers, profile_id_queue, viewed_profiles, review_set, recipe_set)
-    profile_scraper(main_seed, profile_id_queue, viewed_profiles, review_set, recipe_set)
+    profile_scraper(seed, profile_id_queue, viewed_profiles, review_set, recipe_set)
 
     print(f"Reviews count: {len(review_set)}")
     print("*" * 60)
