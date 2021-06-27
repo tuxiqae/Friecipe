@@ -45,9 +45,14 @@ by their preferences.
 
 ![Vectorization of profiles by taste](Assets/profile_vectorization.png)
 
+Visualization of users in a two-dimensional space, after vectorization
+
+![Visualization of recipes in a two dimensional space, after vectorization](Assets/recipes_2dspace.png)
+Visualization of recipes in a two-dimensional space, after vectorization
+
 ### Technologies Used:
 
-The scraper part of the project was written in Python while the Machine Learning part was written in Wolfram
+The scraper part of the project was written in Python while the Data Science part was written in Wolfram
 Mathematica. The data was scraped using Selenium over Docker, we also used MongoDB in order to store the scraped data.
 Docker Compose was used in order to automatically deploy the different applications.
 
@@ -211,13 +216,8 @@ success rate, while afterwards the prediction was successful 97% of the time!
 At last, we used the SoftMax function with the ADAM optimizer.
 
 ![The process of training the model](Assets/model_training.png)
+
 Training the model
-
-![Visualization of users in a two dimensional space, after vectorization](Assets/users_2dspace.png)
-Visualization of users in a two-dimensional space, after vectorization
-
-![Visualization of recipes in a two dimensional space, after vectorization](Assets/recipes_2dspace.png)
-Visualization of recipes in a two-dimensional space, after vectorization
 
 ### Footnotes
 
